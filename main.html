@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <!-- import jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- once open rrun main.js -->
+
+    <!-- stylesheet -->
+    <link rel="stylesheet" href="main.css">
+    <!-- import bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
+</head>
+
+<body>
+    <!-- number input to set number of bombs and grid size -->
+    <input type="number" id="bombs" placeholder="Number of bombs">
+    <input type="number" id="gridSize" placeholder="Grid size">
+    <!-- button to start game -->
+    <button id="start">Start</button>
+    <div id="grid"></div>
+</body>
+
+
+<script>
+    // when button start is clicked, get the value from the gridSize input, make div id = grid a grid with gridSize
+    let isActived = true
+    $("#start").click(function () {
+        isActived = true;
+
+        var gridSize = $("#gridSize").val();
+        $("#grid").css("grid-template-columns", "repeat(" + gridSize + ", 1fr)");
+        $("#grid").css("grid-template-rows", "repeat(" + gridSize + ", 1fr)");
+
+        // get the value from bombs input
+        var bombs = $("#bombs").val();
+        // remove everything from grid
+        $("#grid").empty();
+        // fill grid with gridSize*gridzize tiles, they has tile class and its position in the grid as id (example id="1-1, 0-5, 2-1")
+        for (var i = 0; i < gridSize; i++) {
+            for (var j = 0; j < gridSize; j++) {
+                $("#grid").append("<div class='tile' id='" + i + "-" + j + "'></div>");
+                // every tile receive an empty char
+                $("#" + i + "-" + j).text("");
+            }
+        }
+
+        // pass through all tiles, and add class bombHidden based on formula remainingBombs/remaingTiles
+        var remainingBombs = bombs;
+        var remainingTiles = gridSize * gridSize;
+        $(".tile").each(function () {
+            var random = Math.random();
+            console.log(remainingBombs / remainingTiles);
+            if (random < remainingBombs / remainingTiles) {
+                $(this).addClass("bombHidden");
+                $(this).removeClass("tile");
+                remainingBombs--;
+            }
+            remainingTiles--;
+        });
+    });
+
+    // when div with class bombHidden is clicked, change its class to bomb and add a "*" to its text
+    $(document).on("click", ".bombHidden", function () {
+        isActived = false
+        $(this).removeClass("bombHidden");
+        $(this).removeClass("tile");
+        $(this).addClass("bomb");
+        $(this).text("*");
+    });
+
+    // when div without class bombHidden or bomb is clicked, change it to show the number of bombs around it, and change it class to number
+    $(document).on("click", ".tile:not(.bombHidden):not(.bomb)", function () {
+        if (isActived == true) {
+            var id = $(this).attr("id");
+            var idSplit = id.split("-");
+            var x = parseInt(idSplit[0]);
+            var y = parseInt(idSplit[1]);
+            var bombs = 0;
+            // check all tiles around it, if they have class bombHidden or bomb, add 1 to bombs
+            for (var i = x - 1; i <= x + 1; i++) {
+                for (var j = y - 1; j <= y + 1; j++) {
+                    if ($("#" + i + "-" + j).hasClass("bombHidden") || $("#" + i + "-" + j).hasClass("bomb")) {
+                        bombs++;
+                    }
+                }
+            }
+            // change the tile class to number and add the number of bombs around it as text
+            $(this).removeClass("tile");
+            $(this).addClass("number");
+            $(this).text(bombs);
+
+            // if the number of bombs around it is 0, do the same for its horizontal and vertical neighbors, and set its text to " "
+            if (bombs == 0) {
+                $(this).text(" ");
+                for (var i = x - 1; i <= x + 1; i++) {
+                    for (var j = y - 1; j <= y + 1; j++) {
+                        if ($("#" + i + "-" + j).hasClass("tile")) {
+                            $("#" + i + "-" + j).click();
+                        }
+                    }
+                }
+            }
+            // if theres no more tiles with class tile, reveal all bombs, the player wins
+            if ($(".tile").length == 0) {
+                $(".bombHidden").click();
+                alert("You win!");
+            }
+            
+        }
+    });
+
+
+    // if a bomb is clicked, change all tiles with class bombHidden to bomb and add a "*" to their text, and disable all functions
+    $(document).on("click", ".bombHidden", function () {
+        $(".bombHidden").each(function () {
+            $(this).removeClass("bombHidden");
+            $(this).addClass("bomb");
+            $(this).text("*");
+        });
+    });
+
+    
+    $(document).on("click", ".number", function () {
+        if ($(".number").length == $(".tile").length - $("#bombs").val()) {
+            $(".bombHidden").each(function () {
+                $(this).removeClass("bombHidden");
+                $(this).addClass("bomb");
+                $(this).text("*");
+            });
+        }
+    });
+
+</script>
+
+</html>

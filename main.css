@@ -1,0 +1,59 @@
+body{
+    font-weight: bold;
+    text-align: center;
+    line-height: 100px;
+}
+
+#grid {
+    /* grid 10 columns */
+    display: grid;
+
+    /* limit width and height to be a perfect square */
+    width: 800px;
+    height: 800px;
+    border: 1px solid #000;
+
+
+}
+
+.tile {
+    /* tile with 8% width and height and 2% gap */
+
+    margin: 2%;
+    background-color: rgb(122, 122, 122);
+    border: 1px solid rgb(0, 0, 0);
+
+}
+
+.bomb {
+    /* bomb tile with 8% width and height and 2% gap */
+
+    margin: 2%;
+    background-color: rgb(255, 0, 0);
+    border: 1px solid rgb(0, 0, 0);
+    font-weight: bold;
+    text-align: center;
+    line-height: 100px;
+    overflow: hidden;
+
+}
+
+.number{
+    /* font size bold and fit almos completely its div */
+
+    font-weight: bold;
+    text-align: center;
+    line-height: 100%;
+    border: 1px solid rgb(0, 0, 0);
+    overflow: hidden;
+
+}
+
+.bombHidden{
+    /* bomb tile with 8% width and height and 2% gap */
+
+    margin: 2%;
+    background-color: rgb(122, 122, 122);
+    border: 1px solid rgb(0, 0, 0);
+
+}
